@@ -1,9 +1,17 @@
 const { response } = require('express');
 const express = require('express');
-const app = express();
 const bodyParser= require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const methodOverride = require('method-override')
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+
+const app = express();
+app.use(session({secret : '비밀코드', resave : true, saveUninitialized: false}));
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
 app.use('/public', express.static('public'))
@@ -78,6 +86,19 @@ app.get('/detail/:id',function( request , response ){
 
 });
 
+app.get('/login',function( request , response ){
+  
+    response.render('login.ejs');
+
+});
+
+app.get('/fail',function( request , response ){
+  
+    response.redirect('/login');
+
+});
+
+
 app.post('/todo',function(request, response){
     
     response.send('전송 완료');
@@ -107,6 +128,14 @@ app.post('/todo',function(request, response){
     });
     
 });
+
+app.post('/login',passport.authenticate('local',{
+    failureRedirect: '/fail'
+}),function(request, response){
+    response.redirect('/');
+});
+
+
 
 app.put('/todo',function(request, response){
     
@@ -148,3 +177,34 @@ app.delete('/delete',function( request , response ){
     });
 
 });
+
+
+
+
+passport.use(new LocalStrategy({
+    usernameField: 'id',
+    passwordField: 'pw',
+    session: true,
+    passReqToCallback: false,
+  }, function (id, pw, done) {
+    console.log(id);
+    db.collection('login').findOne({ id: id }, function (error, result) {
+      if (error) return done(error)
+  
+      if (!result) return done(null, false, { message: '존재하지않는 아이디요' })
+      console.log(pw);
+      if (pw == result.pw) {
+        return done(null, result)
+      } else {
+        return done(null, false, { message: '비번틀렸어요' })
+      }
+    })
+  }));
+
+  passport.serializeUser(function (user, done) {
+    done(null, user.id)
+  });
+  
+  passport.deserializeUser(function (id, done) {
+    done(null, {})
+  }); 
