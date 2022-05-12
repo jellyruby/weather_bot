@@ -98,6 +98,21 @@ app.get('/fail',function( request , response ){
 
 });
 
+app.get('/mypage',로그인했니,function( request , response ){
+  
+    response.render('mypage.ejs',{user:request.user});
+
+});
+
+function 로그인했니(request,response,next) {
+
+    if(request.user){
+        next()
+    } else {
+        response.send('로그인안하셨는데요?');
+    }
+
+}
 
 app.post('/todo',function(request, response){
     
@@ -206,5 +221,11 @@ passport.use(new LocalStrategy({
   });
   
   passport.deserializeUser(function (id, done) {
-    done(null, {})
+    db.collection('login').findOne(
+        { id: id }, 
+        function (error, result) {
+
+            done(null, result)
+        });
+    
   }); 
