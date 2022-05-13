@@ -77,6 +77,17 @@ app.get('/list',function( request , response ){
 
 });
 
+app.get('/search',function( request , response ){
+
+    console.log(request.query);
+
+    db.collection('post').find({title:request.query.value}).toArray((error,result)=>
+    {
+        response.render('list.ejs', {posts : result});
+        //console.log(result);
+    })
+});
+
 app.get('/detail/:id',function( request , response ){
 
     db.collection('post').findOne({_id:parseInt(request.params.id)},function(error,result){

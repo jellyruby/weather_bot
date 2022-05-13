@@ -19,6 +19,12 @@
 
       <div class="container text-center">
       <h1 class="ml-2 my-3">서버에서 가져온 할일 리스트</h1>
+
+      <div class="container input-group mb-2">
+        <input class="form-control" id="search-input">
+        <button class="input-group-append btn btn-danger" id="search">검색</button>
+      </div>
+
       <ul class="list-group">
         <% for(var i=0; i < posts.length; i++){ %>
           <li class="list-group-item">
@@ -37,7 +43,7 @@
       <script>
 
         $('.delete').on('click',function(e){
-
+          
           var no = e.target.dataset.id;
           var obj = $(this);
 
@@ -67,11 +73,15 @@
         });
 
        
-          $('.edit').on('click', function (e) {
+        $('.edit').on('click', function (e) {
 
-            location.href = '/edit/' + e.target.dataset.id;
+          location.href = '/edit/' + e.target.dataset.id;
 
-          });
+        });
+
+        $('#search').click(function(){
+          window.location.replace('/search?value='+$('#search-input').val())
+        })
       </script>
 
 
