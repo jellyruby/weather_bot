@@ -120,6 +120,7 @@ app.get('/login',function( request , response ){
 
 app.get('/fail',function( request , response ){
   
+    alert('로그인에 실패했습니다!');
     response.redirect('/login');
 
 });
@@ -140,40 +141,31 @@ function 로그인했니(request,response,next) {
 
 }
 
-app.post('/todo',function(request, response){
-    
-    response.send('전송 완료');
-
-    let date = request.body.date;
-    let title = request.body.title;
- 
-    console.log(request.body.title);
-
-    db.collection('counter').findOne({
-        name: '게시물갯수'
-    },function(error,result){
-        console.log(result.totalPost);
-        let totalPost = result.totalPost
-        db.collection('post').insertOne( { _id : totalPost+1, 'title':title,'date': date , /*_id: 100*/}, function(error,result){
-            console.log('저장 완료');
-
-            db.collection('counter').updateOne(
-                {'name':'게시물갯수'},
-                { $inc : {'totalPost':1} },
-                function(error,result){
-                if(error) {
-                    console.log(error);
-                }
-            });
-        });
-    });
-    
-});
 
 app.post('/login',passport.authenticate('local',{
     failureRedirect: '/fail'
 }),function(request, response){
     response.redirect('/');
+});
+
+app.post('/register',function(request, response){
+    
+    db.collection('login').findOne({ id: request.body.id }, function (error, result) {
+        if (error) return done(error)
+    
+        if (result) return done(null, false, { message: '아이디가 존재합니다.' })
+
+        db.collection('login').insertOne( { id : request.body.id, pw: request.body.pw}, function(error,result){
+            console.log('생성 완료');
+    
+            response.redirect('/');
+        });
+
+    });
+    
+
+
+
 });
 
 
@@ -207,17 +199,6 @@ app.put('/todo',function(request, response){
 
 
 
-app.delete('/delete',function( request , response ){
-
-    request.body._id = parseInt(request.body._id);
-    db.collection('post').deleteOne( request.body ,function(error,result){
-        console.log('삭제완료');
-        response.status(200).send({
-            message:'성공했습니다.'
-        });
-    });
-
-});
 
 
 
@@ -255,3 +236,60 @@ passport.use(new LocalStrategy({
         });
     
   }); 
+
+  
+app.post('/todo',function(request, response){
+    
+    response.send('전송 완료');
+
+    let date = request.body.date;
+    let title = request.body.title;
+ 
+    console.log(request.body.title);
+
+    db.collection('counter').findOne({
+        name: '게시물갯수'
+    },function(error,result){
+
+        console.log(result.totalPost);
+        let totalPost = result.totalPost;
+        let db_data = { _id : totalPost+1, 'title':title,'date': date , author : request.user._id };
+
+
+
+        db.collection('post').insertOne( db_data , function(error,result){
+            console.log('저장 완료');
+
+            db.collection('counter').updateOne(
+                {'name':'게시물갯수'},
+                { $inc : {'totalPost':1} },
+                function(error,result){
+                if(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+    
+});
+
+app.delete('/delete',function( request , response ){
+
+    request.body._id = parseInt(request.body._id);
+
+    db_data = { _id : request.body._id, author:  request.user._id }
+
+    
+    
+    db.collection('post').deleteOne(db_data,function(error,result){
+        console.log('삭제완료');
+        let result_msg = '성공했습니다.';
+        if(!result) {
+            result_msg ='자신의 게시물을 삭제해주세요.';
+        }
+        response.status(200).send({
+            message: result_msg
+        });
+    });
+
+});
