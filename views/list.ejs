@@ -18,7 +18,8 @@
       <%-include('nav.html'); %>
 
       <div class="container text-center">
-      <h1 class="ml-2 my-3">서버에서 가져온 할일 리스트</h1>
+      <h1 class="ml-2 my-3">게시글 리스트</h1>
+
 
       <div class="container input-group mb-2">
         <input class="form-control" id="search-input">
@@ -28,8 +29,8 @@
       <ul class="list-group">
         <% for(var i=0; i < posts.length; i++){ %>
           <li class="list-group-item">
-          <h4> 할 일 : <%= posts[i].title  %> </h4>
-          <p>할일 마감날짜 : <%= posts[i].date  %></p>
+          <h4> 제목 : <%= posts[i].title  %> </h4>
+          <p> 내용 : <%= posts[i].date  %></p>
           <button type="button" class="btn btn-dark edit" data-id="<%= posts[i]._id  %>">수정</button>
           <button type="button" class="btn btn-dark delete" data-id="<%= posts[i]._id  %>">삭제</button>
           <button type="button" class="btn btn-dark detail" data-id="<%= posts[i]._id  %>">상세보기</button>
@@ -68,14 +69,14 @@
 
         $('.detail').on('click',function(e){
 
-          location.href = '/detail/'+e.target.dataset.id;
+          location.href = '/board/detail/'+e.target.dataset.id;
          
         });
 
        
         $('.edit').on('click', function (e) {
 
-          location.href = '/edit/' + e.target.dataset.id;
+          location.href = '/board/edit/' + e.target.dataset.id;
 
         });
 

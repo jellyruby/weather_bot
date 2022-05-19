@@ -9,10 +9,14 @@ const session = require('express-session');
 
 const app = express();
 app.use(session({secret : '비밀코드', resave : true, saveUninitialized: false}));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(bodyParser.urlencoded({extended: true}))
+
+
+
 app.use(methodOverride('_method'))
 app.use('/public', express.static('public'))
 app.set('view engine', 'ejs');
@@ -35,7 +39,9 @@ function(error,client){
 
 
 app.use('/shop',require('./routes/shop.js'));
+
 app.use('/login',require('./routes/login.js'));
+app.use('/board',require('./routes/board.js'));
 
 
 app.get('/',function( request , response ){
@@ -44,29 +50,18 @@ app.get('/',function( request , response ){
 
 });
 
-app.get('/write',function( request , response ){
 
-    response.render('write.ejs');
+function login_check(request,response,next) {
 
-});
+    if(request.user){
+        next()
+    } else {
+        response.redirect('/login');
+    }
 
-app.get('/edit/:id', function (request, response) {
+}
 
-    db.collection('post').findOne({ _id: parseInt(request.params.id) }, function (error, result) {
-        console.log(result);
-        response.render('edit.ejs', { data: result, id: request.params.id });
-    });
 
-});
-
-app.get('/list',function( request , response ){
-
-    db.collection('post').find().toArray(function(error,result){
-        console.log(result);
-        response.render('list.ejs', {posts : result});
-    });
-
-});
 
 app.get('/search',function( request , response ){
 
@@ -94,27 +89,8 @@ app.get('/search',function( request , response ){
     })
 });
 
-app.get('/detail/:id',function( request , response ){
 
-    db.collection('post').findOne({_id:parseInt(request.params.id)},function(error,result){
-        console.log(result);
-        response.render('detail.ejs', {data : result});
-    });
 
-});
-
-app.get('/login',function( request , response ){
-  
-    //response.render('login.ejs');
-
-});
-
-app.get('/fail',function( request , response ){
-  
-    alert('로그인에 실패했습니다!');
-    response.redirect('/login');
-
-});
 
 app.get('/mypage',login_check,function( request , response ){
   
@@ -122,15 +98,7 @@ app.get('/mypage',login_check,function( request , response ){
 
 });
 
-function login_check(request,response,next) {
 
-    if(request.user){
-        next()
-    } else {
-        response.redirect('/login');
-    }
-
-}
 
 
 app.post('/login',passport.authenticate('local',{
@@ -160,33 +128,6 @@ app.post('/register',function(request, response){
 });
 
 
-
-app.put('/todo',function(request, response){
-    
-    response.send('전송 완료');
-
-    let id = request.body._id;
-    let date = request.body.date;
-    let title = request.body.title;
- 
-    console.log(request.body);
-
-    db.collection('counter').findOne({
-        name: '게시물갯수'
-    }, function (error, result) {
-
-        db.collection('post').updateOne(
-            { _id: parseInt(id) },
-            {
-                $set:
-                    { 'title': title, 'date': date, /*_id: 100*/ }
-            }
-            , function (error, result) {
-                console.log('저장 완료');
-            });
-    });
-    
-});
 
 
 
@@ -229,40 +170,7 @@ passport.use(new LocalStrategy({
   }); 
 
   
-app.post('/todo',function(request, response){
-    
-    response.send('전송 완료');
 
-    let date = request.body.date;
-    let title = request.body.title;
- 
-    console.log(request.body.title);
-
-    db.collection('counter').findOne({
-        name: '게시물갯수'
-    },function(error,result){
-
-        console.log(result.totalPost);
-        let totalPost = result.totalPost;
-        let db_data = { _id : totalPost+1, 'title':title,'date': date , author : request.user._id };
-
-
-
-        db.collection('post').insertOne( db_data , function(error,result){
-            console.log('저장 완료');
-
-            db.collection('counter').updateOne(
-                {'name':'게시물갯수'},
-                { $inc : {'totalPost':1} },
-                function(error,result){
-                if(error) {
-                    console.log(error);
-                }
-            });
-        });
-    });
-    
-});
 
 app.delete('/delete',function( request , response ){
 
