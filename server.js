@@ -25,16 +25,17 @@ function(error,client){
 
     db = client.db('todoapp');
 
-    app.listen(8080, function(){
+    app.listen(8089, function(){
     
-        console.log('listening on 8080');
+        console.log('listening on 8089');
     
     });
 
 });
 
 
-app.use('/shop',require('./routes/shop.js'))
+app.use('/shop',require('./routes/shop.js'));
+app.use('/login',require('./routes/login.js'));
 
 
 app.get('/',function( request , response ){
@@ -104,7 +105,7 @@ app.get('/detail/:id',function( request , response ){
 
 app.get('/login',function( request , response ){
   
-    response.render('login.ejs');
+    //response.render('login.ejs');
 
 });
 
@@ -115,18 +116,18 @@ app.get('/fail',function( request , response ){
 
 });
 
-app.get('/mypage',로그인했니,function( request , response ){
+app.get('/mypage',login_check,function( request , response ){
   
     response.render('mypage.ejs',{user:request.user});
 
 });
 
-function 로그인했니(request,response,next) {
+function login_check(request,response,next) {
 
     if(request.user){
         next()
     } else {
-        response.send('로그인안하셨는데요?');
+        response.redirect('/login');
     }
 
 }
