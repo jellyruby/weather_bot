@@ -29,9 +29,9 @@ function(error,client){
 
     db = client.db('todoapp');
 
-    app.listen(8089, function(){
+    app.listen(8080, function(){
     
-        console.log('listening on 8089');
+        console.log('listening on 8080');
     
     });
 
