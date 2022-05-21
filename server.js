@@ -21,6 +21,20 @@ app.use(methodOverride('_method'))
 app.use('/public', express.static('public'))
 app.set('view engine', 'ejs');
 
+let multer = require('multer');
+var storage = multer.diskStorage({
+
+  destination : function(req, file, cb){
+    cb(null, './public/image')
+  },
+  filename : function(req, file, cb){
+    cb(null, file.originalname )
+  }
+
+});
+
+var upload = multer({storage : storage});
+
 
 MongoClient.connect('mongodb+srv://yjw001206:secondcoming7@cluster0.rx43y.mongodb.net/todoapp?retryWrites=true&w=majority',
 function(error,client){
@@ -39,7 +53,6 @@ function(error,client){
 
 
 app.use('/shop',require('./routes/shop.js'));
-
 app.use('/login',require('./routes/login.js'));
 app.use('/board',require('./routes/board.js'));
 
@@ -61,34 +74,13 @@ function login_check(request,response,next) {
 
 }
 
+app.get('/image/:imageName', function(request, response){
+    response.sendFile( __dirname + '/public/image/' + request.params.imageName )
+  })
 
-
-app.get('/search',function( request , response ){
-
-    console.log(request.query);
-
-    var search = [
-        {
-          $search: {
-            index: 'title_search',
-            text: {
-              query: request.query.value,
-              path: 'title'  // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
-            }
-          }
-        },
-       { $sort : { _id : 1 } },
-       { $limit : 10 },
-       { $project : { 제목 : 1, _id : 0 , score : { $meta : "searchScore" } } }
-    ] 
-    db.collection('post').aggregate({ $text : { $search:request.query.value}}).toArray((error,result)=>
-    {
-        console.log(result);
-        response.render('list.ejs', {posts : result});
-
-    })
-});
-
+app.get('/upload', function(request, response){
+    response.render('upload.ejs')
+  }); 
 
 
 
@@ -99,7 +91,9 @@ app.get('/mypage',login_check,function( request , response ){
 });
 
 
-
+app.post('/upload', upload.single('profile'), function(request, response){
+    response.send('업로드완료')
+  }); 
 
 app.post('/login',passport.authenticate('local',{
     failureRedirect: '/fail'
@@ -127,7 +121,21 @@ app.post('/register',function(request, response){
 
 });
 
+var path = require('path');
 
+var upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        /*var ext = path.extname(file.originalname);
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+            return callback(new Error('PNG, JPG만 업로드하세요'))
+        }*/
+        callback(null, true)
+    },
+    limits:{
+        fileSize: 1024 * 1024 * 1024
+    }
+});
 
 
 
