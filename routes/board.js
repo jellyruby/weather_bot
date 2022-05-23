@@ -58,6 +58,32 @@ router.get('/list',function( request , response ){
 
 });
 
+app.get('/search',function( request , response ){
+
+    console.log(request.query);
+
+    var search = [
+        {
+          $search: {
+            index: 'title_search',
+            text: {
+              query: request.query.value,
+              path: 'title'  // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
+            }
+          }
+        },
+       { $sort : { _id : 1 } },
+       { $limit : 10 },
+       { $project : { 제목 : 1, _id : 0 , score : { $meta : "searchScore" } } }
+    ] 
+    db.collection('post').aggregate({ $text : { $search:request.query.value}}).toArray((error,result)=>
+    {
+        console.log(result);
+        response.render('list.ejs', {posts : result});
+
+    })
+});
+
 //게시글 쓰기 프로세스
 router.post('/',function(request, response){
     
