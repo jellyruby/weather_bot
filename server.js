@@ -55,7 +55,7 @@ function(error,client){
 app.use('/shop',require('./routes/shop.js'));
 app.use('/login',require('./routes/login.js'));
 app.use('/board',require('./routes/board.js'));
-
+app.use('/chat',require('./routes/chat.js'));
 
 app.get('/',function( request , response ){
 

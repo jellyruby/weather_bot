@@ -13,13 +13,23 @@ function login_check(request,response,next) {
 
 }
 
-
-//게시글 리스트
+//채팅방 리스트
 router.get('/',function( request , response ){
 
     db.collection('post').find().toArray(function(error,result){
         console.log(result);
-        response.render('list.ejs', {posts : result});
+        response.render('chatRoomList.ejs', {posts : result});
+    });
+
+});
+
+
+//게시글 리스트
+router.get('/:chatroomid',function( request , response ){
+
+    db.collection('post').find().toArray(function(error,result){
+        console.log(result);
+        response.render('chat.ejs', {posts : result});
     });
 
 });
@@ -27,9 +37,9 @@ router.get('/',function( request , response ){
 
 
 //채팅방 개설 프로세스
-router.post('/',function(request, response){
+router.post('/chatroom/',function(request, response){
     
-    let user_id =  request.user._id;
+    let user_id =  request.user.id;
 
     
     console.log(request.body.title);
@@ -38,9 +48,9 @@ router.post('/',function(request, response){
         name: '채팅방갯수'
     },function(error,result){
 
-        console.log(result.totalPost);
-        let totalPost = result.totalPost;
-        let db_data = { _id : totalPost+1, 'title':user_id+'의 채팅방','author':user_id };
+        console.log(result.totalChat);
+        let totalChat = result.totalChat;
+        let db_data = { _id : totalChat+1, 'title':user_id+'의 채팅방','author':user_id };
 
 
 
@@ -49,12 +59,12 @@ router.post('/',function(request, response){
 
             db.collection('counter').updateOne(
                 {'name':'채팅방갯수'},
-                { $inc : {'totalPost':1} },
+                { $inc : {'totalChat':1} },
                 function(error,result){
                 if(error) {
                     console.log(error);
                 }
-                response.redirect('/board/list');
+                response.redirect('/chat');
 
             });
         });
@@ -100,6 +110,16 @@ router.put('/',function(request, response){
     });
     
 });
+
+function getLeftMenu (){
+
+    db.collection('chatroom').find().toArray(function(error,result){
+        console.log(result);
+        response.render('list.ejs', {posts : result});
+    });
+
+
+}
 
 
 module.exports = router;

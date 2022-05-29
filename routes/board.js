@@ -58,7 +58,7 @@ router.get('/list',function( request , response ){
 
 });
 
-app.get('/search',function( request , response ){
+router.get('/search',function( request , response ){
 
     console.log(request.query);
 
