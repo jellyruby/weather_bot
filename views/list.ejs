@@ -105,6 +105,12 @@
           console.log(errThrown);
         })
 
+
+        let id= e.target.dataset.id;
+        $.post('/chat/chatroom',{target : id}).then(()=>{
+
+        });
+
         });
 
         $('#search').click(function(){

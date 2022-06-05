@@ -99,7 +99,7 @@ router.post('/',function(request, response){
 
         console.log(result.totalPost);
         let totalPost = result.totalPost;
-        let db_data = { _id : totalPost+1, 'title':title,'date': date , author : request.user._id };
+        let db_data = { _id : totalPost+1, 'title':title,'date': date , author : request.user.id };
 
 
 
@@ -147,6 +147,27 @@ router.put('/',function(request, response){
             });
     });
     
+});
+
+router.delete('/delete',function( request , response ){
+
+    request.body._id = parseInt(request.body._id);
+
+    db_data = { _id : request.body._id, author:  request.user.id }
+
+    
+    
+    db.collection('post').deleteOne(db_data,function(error,result){
+        console.log('삭제완료');
+        let result_msg = '성공했습니다.';
+        if(!result) {
+            result_msg ='자신의 게시물을 삭제해주세요.';
+        }
+        response.status(200).send({
+            message: result_msg
+        });
+    });
+
 });
 
 

@@ -40,7 +40,7 @@ router.get('/:chatroomid',function( request , response ){
 router.post('/chatroom/',function(request, response){
     
     let user_id =  request.user.id;
-
+    let target =  request.body.target;
     
     console.log(request.body.title);
 
@@ -50,7 +50,7 @@ router.post('/chatroom/',function(request, response){
 
         console.log(result.totalChat);
         let totalChat = result.totalChat;
-        let db_data = { _id : totalChat+1, 'title':user_id+'의 채팅방','author':user_id };
+        let db_data = { _id : totalChat+1, 'title':user_id+'의 채팅방','author':user_id,'target':target, 'member':[user_id,target],date:new Date()};
 
 
 
@@ -73,7 +73,7 @@ router.post('/chatroom/',function(request, response){
 });
 
 
-//게시글 수정
+//채팅방 수정
 router.put('/',function(request, response){
     
     let id = request.body._id;
@@ -83,7 +83,7 @@ router.put('/',function(request, response){
     console.log(request.body);
 
     db.collection('counter').findOne({
-        name: '게시물갯수'
+        name: '채팅방갯수'
     }, function (error, result) {
 
         db.collection('post').updateOne(
