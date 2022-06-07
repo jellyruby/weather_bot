@@ -95,7 +95,7 @@ app.post('/upload', upload.single('profile'), function(request, response){
   }); 
 
 app.post('/login',passport.authenticate('local',{
-    failureRedirect: '/fail'
+    failureRedirect: '/login/fail'
 }),function(request, response){
     response.redirect('/');
 });

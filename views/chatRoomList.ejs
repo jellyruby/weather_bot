@@ -31,7 +31,7 @@
           <li class="list-group-item">
           <h4> 제목 : <%= posts[i].title  %> </h4>
           <p> 내용 : <%= posts[i].date  %></p>
-          <button type="button" class="btn btn-dark edit" data-id="<%= posts[i]._id  %>">수정</button>
+
           <button type="button" class="btn btn-dark delete" data-id="<%= posts[i]._id  %>">삭제</button>
           <button type="button" class="btn btn-dark detail" data-id="<%= posts[i]._id  %>">상세보기</button>
           <button type="button" class="btn btn-dark chat" data-id="<%= posts[i]._id  %>">채팅방 개설</button>
@@ -70,16 +70,11 @@
 
         $('.detail').on('click',function(e){
 
-          location.href = '/board/detail/'+e.target.dataset.id;
+          location.href = '/chat/'+e.target.dataset.id;
          
         });
 
        
-        $('.edit').on('click', function (e) {
-
-          location.href = '/board/edit/' + e.target.dataset.id;
-
-        });
 
 
        

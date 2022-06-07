@@ -34,7 +34,7 @@
           <button type="button" class="btn btn-dark edit" data-id="<%= posts[i]._id  %>">수정</button>
           <button type="button" class="btn btn-dark delete" data-id="<%= posts[i]._id  %>">삭제</button>
           <button type="button" class="btn btn-dark detail" data-id="<%= posts[i]._id  %>">상세보기</button>
-          <button type="button" class="btn btn-dark chat" data-id="<%= posts[i]._id  %>">채팅방 개설</button>
+          <button type="button" class="btn btn-dark chat" data-id="<%= posts[i]._id  %>" data-author="<%= posts[i].author  %>">채팅방 개설</button>
         </li>
         <%}%>
         
@@ -86,13 +86,15 @@
         $('.chat').on('click',function(e){
           
           var no = e.target.dataset.id;
+          var author = e.target.dataset.author;
           var obj = $(this);
 
           $.ajax({
             url: '/chat/chatroom',
             method:'post',
             data: {
-              _id: no
+              _id: no,
+              target: author
             },
 
         }).done(function(result){
@@ -103,14 +105,14 @@
           console.log(xhr);
           console.log(TextStatus);
           console.log(errThrown);
-        })
+        });
 
 
-        let id= e.target.dataset.id;
+        /*let id= e.target.dataset.id;
         $.post('/chat/chatroom',{target : id}).then(()=>{
 
         });
-
+*/
         });
 
         $('#search').click(function(){

@@ -1,12 +1,12 @@
 <div class="col-3">
   <ul class="list-group chat-list">
-    <li class="list-group-item" data-id="">
-      <h6>채팅방1</h6>
-      <h6 class="text-small">채팅방설명</h6>
+
+    <% for(let i=0; i < chatrooms.length; i++){ %>
+      <li class="list-group-item" data-id="<%= chatrooms[i]._id  %>">
+        <h6>채팅방<%= i %></h6>
+        <h6 class="text-small"><%= chatrooms[i].member[0]  %></h6>
+      </li>
     </li>
-    <li class="list-group-item">
-       <h6>채팅방2</h6>
-       <h6 class="text-small">채팅방설명</h6>
-     </li>
-   </ul>
+    <%}%>
+
  </div>

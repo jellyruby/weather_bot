@@ -24,10 +24,19 @@
 
         <div class="row">
 
-      
+          <%-include('chatLeftMenu.ejs'); %>
            <div class="col-9 p-0">
              <div class="chat-room">
                 <ul class="list-group chat-content">
+                  <% for(let i=0; i < message.length; i++){ %>
+                    <li>
+                      <% if(message[i].id == user_id) {%> 
+                        <span class="chat-box mine"><%= message[i].message  %></span>
+                      <%}else{%>
+                        <span class="chat-box"><%= message[i].message  %></span>
+                      <%}%>
+                    </li>
+                  <%}%>
                   <li><span class="chat-box">채팅방1 내용</span></li>
                   <li><span class="chat-box">채팅방1 내용</span></li>
                   <li><span class="chat-box mine">채팅방1 내용</span></li>

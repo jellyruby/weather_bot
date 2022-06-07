@@ -16,7 +16,7 @@ function login_check(request,response,next) {
 //채팅방 리스트
 router.get('/',function( request , response ){
 
-    db.collection('post').find().toArray(function(error,result){
+    db.collection('chatroom').find().toArray(function(error,result){
         console.log(result);
         response.render('chatRoomList.ejs', {posts : result});
     });
@@ -24,12 +24,19 @@ router.get('/',function( request , response ){
 });
 
 
-//게시글 리스트
+//채팅방 보기
 router.get('/:chatroomid',function( request , response ){
 
-    db.collection('post').find().toArray(function(error,result){
-        console.log(result);
-        response.render('chat.ejs', {posts : result});
+
+
+    db.collection('chatroom').find({"member" : request.user.id}).toArray(function(error,result){
+
+        
+
+        getChatMessage(request.params.chatroomid,(message)=>{
+            response.render('chat.ejs', {chatrooms : result, user_id: request.user.id , "message" : message});
+        })
+        
     });
 
 });
@@ -41,7 +48,8 @@ router.post('/chatroom/',function(request, response){
     
     let user_id =  request.user.id;
     let target =  request.body.target;
-    
+    let board_id =  request.body._id;
+
     console.log(request.body.title);
 
     db.collection('counter').findOne({
@@ -50,7 +58,7 @@ router.post('/chatroom/',function(request, response){
 
         console.log(result.totalChat);
         let totalChat = result.totalChat;
-        let db_data = { _id : totalChat+1, 'title':user_id+'의 채팅방','author':user_id,'target':target, 'member':[user_id,target],date:new Date()};
+        let db_data = { _id : totalChat+1, 'title':user_id+'의 채팅방','author':user_id,'target':target,'board_id':board_id, 'member':[user_id,target],date:new Date()};
 
 
 
@@ -118,6 +126,23 @@ function getLeftMenu (){
         response.render('list.ejs', {posts : result});
     });
 
+
+}
+
+function getChatMessage(chatroom_id,_callback){
+
+    console.log(chatroom_id);
+    let message_array = [];
+
+    db.collection('chat_message').find({"chatroom_id":parseInt(chatroom_id)}).toArray(function(error,result){
+        console.log(result);
+        _callback(result);
+    });
+
+
+}
+
+function setChatMessage(chatroom_id){
 
 }
 
