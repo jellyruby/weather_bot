@@ -37,13 +37,11 @@
                       <%}%>
                     </li>
                   <%}%>
-                  <li><span class="chat-box">채팅방1 내용</span></li>
-                  <li><span class="chat-box">채팅방1 내용</span></li>
-                  <li><span class="chat-box mine">채팅방1 내용</span></li>
+
                 </ul>
               <div class="input-group">
                 <input class="form-control" id="chat-input">
-                <button class="btn btn-secondary" id="send">전송</button>
+                <button class="btn btn-secondary" id="send" data-id="<%= chatroomid  %>">전송</button>
               </div>
             </div>
           </div>
@@ -51,9 +49,31 @@
       
       </div> 
     
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
   </body>
+  <script>
+      $('#send').on('click',(e)=>{
 
+        var no = e.target.dataset.id;
+        var message = document.getElementById('chat-input').value
+        $.ajax({
+            url: '/chat/'+no,
+            method:'post',
+            data: {
+              _id: no,
+              "message": message
+            },
+
+        }).done(function(result){
+
+          obj.parent('li').fadeOut();
+        }).fail(function(xhr,TextStatus,errThrown){
+
+        });
+
+
+      });
+  </script>
 </html>

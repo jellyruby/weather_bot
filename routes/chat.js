@@ -34,7 +34,7 @@ router.get('/:chatroomid',function( request , response ){
         
 
         getChatMessage(request.params.chatroomid,(message)=>{
-            response.render('chat.ejs', {chatrooms : result, user_id: request.user.id , "message" : message});
+            response.render('chat.ejs', {chatrooms : result, user_id: request.user.id , "message" : message,"chatroomid":request.params.chatroomid});
         })
         
     });
@@ -79,6 +79,30 @@ router.post('/chatroom/',function(request, response){
     });
     
 });
+
+//채팅방 개설 프로세스
+router.post('/:chatroomid/',function(request, response){
+    
+    let user_id =  request.user.id;
+    let message =  request.body.message;
+    let chatroom_id =  request.params.chatroomid
+
+    console.log(request.body.title);
+
+
+
+        let db_data = { 'chatroom_id':parseInt(chatroom_id) ,'id':user_id,'message':message,date:new Date()};
+
+
+
+        db.collection('chat_message').insertOne( db_data , function(error,result){
+            console.log('저장 완료'); 
+
+        });
+    
+    
+});
+
 
 
 //채팅방 수정
