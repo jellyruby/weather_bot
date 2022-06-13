@@ -28,7 +28,7 @@
 
       <ul class="list-group">
         <% for(var i=0; i < posts.length; i++){ %>
-          <li class="list-group-item">
+          <li class="list-group-item"  data-id="<%= posts[i]._id  %>">
           <h4> 제목 : <%= posts[i].title  %> </h4>
           <p> 내용 : <%= posts[i].date  %></p>
 

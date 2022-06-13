@@ -21,13 +21,13 @@
     <%-include('header.html'); %>
 
     <div class="container p-4 detail">
-
+        <input type="hidden" id="user_id" value="<%= user_id%>">
         <div class="row">
 
           <%-include('chatLeftMenu.ejs'); %>
            <div class="col-9 p-0">
              <div class="chat-room">
-                <ul class="list-group chat-content">
+                <ul class="list-group chat-content" >
                   <% for(let i=0; i < message.length; i++){ %>
                     <li>
                       <% if(message[i].id == user_id) {%> 
@@ -53,6 +53,7 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
   </body>
+  
   <script>
       $('#send').on('click',(e)=>{
 
@@ -74,6 +75,35 @@
         });
 
 
+      });
+
+      $('.list-group-item').click(function (e) {
+        const boardid = this.dataset.id;
+        const eventSource = new EventSource('/chat/message/' + boardid);
+
+        const get_message = (result) => {
+          return  JSON.parse(result.data).reduce((acc, value) => {
+
+            const user_id = $('#user_id').val();
+            const tmp_html = (value.id == user_id) ? "mine" : "";
+
+            return acc + '<li><span class="chat-box ' + tmp_html + '">' + value.message + '</span></li>'
+
+          }, "")
+        }
+
+        eventSource.addEventListener("message", function (result) {
+
+          html = get_message(result);
+
+          $('.chat-content').html(html);
+        });
+        eventSource.addEventListener("newMessage", function (result) {
+
+          html = get_message(result);
+
+          $('.chat-content').append(html);
+        });
       });
   </script>
 </html>

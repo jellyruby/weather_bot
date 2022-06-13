@@ -23,7 +23,47 @@ router.get('/',function( request , response ){
 
 });
 
+router.get('/message/:chatroomid',function( request , response ){
 
+
+    response.writeHead(200,{
+    "Connection": "keep-alive",
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache"
+  });
+  
+  
+  db.collection('chatroom').find({"member" : request.user.id}).toArray(function(error,result){
+
+
+    getChatMessage(request.params.chatroomid,(message)=>{
+         
+        response.write('event: message\n');
+        response.write('data:'+ JSON.stringify(message)+'\n\n');
+    })
+    
+    const pipeline=[
+
+        {$match : {'fullDocument.parent': request.params.id}}
+      ];
+      
+      const collection = db.collection('chat_message');
+      const changeStream = collection.watch(pipeline);
+      changeStream.on('change',(result)=>{
+        response.write('event: newMessage\n');
+        response.write('data:'+ JSON.stringify([result.fullDocument])+'\n\n');
+      });
+
+    });
+  
+
+
+});
+
+
+
+
+  
 //채팅방 보기
 router.get('/:chatroomid',function( request , response ){
 
@@ -41,7 +81,7 @@ router.get('/:chatroomid',function( request , response ){
 
 });
 
-
+  
 
 //채팅방 개설 프로세스
 router.post('/chatroom/',function(request, response){
