@@ -55,6 +55,29 @@ function(error,client){
 app.use('/shop',require('./routes/shop.js'));
 app.use('/login',require('./routes/login.js'));
 
+var himawari = require('@ungoldman/himawari');
+
+
+
+app.get('/image',function( request , response ){
+
+  himawari({
+    zoom: 2,
+    outfile: 'C:/Users/user/Pictures/earth.jpg',
+    date: 'latest',
+    success: function () {
+      console.log("Complete!");
+
+      
+    },
+    chunk: function (info) {
+      console.log('COMPLETE', (info.part+'/'+info.total), '(' + ((info.part / info.total)*100).toFixed(0)+'%' + ')');
+    }
+  });
+  response.sendFile( 'C:/Users/user/Pictures/earth.jpg' );
+
+});
+
 
 app.get('/',function( request , response ){
 
