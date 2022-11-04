@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const { response } = require('express');
 const express = require('express');
 const bodyParser= require('body-parser');
@@ -58,13 +60,13 @@ app.use('/login',require('./routes/login.js'));
 var himawari = require('@ungoldman/himawari');
 
 
-
 app.get('/image',function( request , response ){
 
   himawari({
-    zoom: 2,
-    outfile: 'C:/Users/user/Pictures/earth.jpg',
+    zoom: 1,
+    outfile: process.env.PROJECTDIR+'images/earth.jpg',
     date: 'latest',
+    infrared: false,
     success: function () {
       console.log("Complete!");
 
@@ -74,7 +76,7 @@ app.get('/image',function( request , response ){
       console.log('COMPLETE', (info.part+'/'+info.total), '(' + ((info.part / info.total)*100).toFixed(0)+'%' + ')');
     }
   });
-  response.sendFile( 'C:/Users/user/Pictures/earth.jpg' );
+  response.sendFile( process.env.PROJECTDIR+'images/earth.jpg' );
 
 });
 
