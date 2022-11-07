@@ -62,23 +62,32 @@ var himawari = require('@ungoldman/himawari');
 
 app.get('/image',function( request , response ){
 
-  himawari({
-    zoom: 1,
-    outfile: process.env.PROJECTDIR+'images/earth.jpg',
-    date: 'latest',
-    infrared: false,
-    success: function () {
-      console.log("Complete!");
+  var himawari = require('@ungoldman/himawari');
 
-      
-    },
-    chunk: function (info) {
-      console.log('COMPLETE', (info.part+'/'+info.total), '(' + ((info.part / info.total)*100).toFixed(0)+'%' + ')');
-    }
-  });
+
+  himawari({
+      zoom: 1,
+    outfile: process.env.PROJECTDIR+'images/earth.jpg',
+      date: 'latest',
+    infrared: false,
+      success: function () {
+        console.log("Complete!");
+        process.exit();
+      },
+      chunk: function (info) {
+        console.log('COMPLETE', (info.part+'/'+info.total), '(' + ((info.part / info.total)*100).toFixed(0)+'%' + ')');
+      }
+    });
   response.sendFile( process.env.PROJECTDIR+'images/earth.jpg' );
 
 });
+
+app.get('/crawling',async (request,response)=>{
+  const crawling = require('./crawling');
+  const CWXOBj = await crawling.CWXHtmlParse;
+  console.log(CWXOBj);
+
+})
 
 
 app.get('/',function( request , response ){
