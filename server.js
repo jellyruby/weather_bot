@@ -84,8 +84,10 @@ app.get('/image',function( request , response ){
 
 app.get('/crawling',async (request,response)=>{
   const crawling = require('./crawling');
-  const CWXOBj = await crawling.CWXHtmlParse;
-  console.log(CWXOBj);
+  const StormInfo = crawling.GetStormInfo;
+  console.log(StormInfo);
+
+  response.send(StormInfo);
 
 })
 
