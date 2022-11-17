@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer');
 //TropicalTidibits : TD
 //cyclonicwx : CWX
 
-class CrawlingClass {
+class CrawlingClass { 
 
   constructor(){
     this.crawlingList = [
