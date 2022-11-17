@@ -60,7 +60,9 @@ class CrawlingClass {
     
     const lists = $(".curtracks");              // 복사한 리스트의 Selector로 리스트를 모두 가져온다.
 
+
     const CycloneDataList = new Promise ( resolve => {
+
 
       const trackImageList = []; 
       lists.each((index, list) => {               // 모든 리스트를 순환한다.
