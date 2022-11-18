@@ -84,7 +84,7 @@ app.get('/image',function( request , response ){
 
 app.get('/crawling',async (request,response)=>{
   const crawling = require('./crawling');
-  const StormInfo = crawling.GetStormInfo;
+  const StormInfo = await crawling.GetStormInfo;
   console.log(StormInfo);
 
   response.send(StormInfo);
