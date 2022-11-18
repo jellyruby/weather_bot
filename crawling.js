@@ -51,8 +51,8 @@ class CrawlingClass {
       width: 1366,
       height: 768
     });
-    //await page.goto('https://cyclonicwx.com/storms/');
-    await page.goto(url);
+    await page.goto('https://cyclonicwx.com/storms/');
+    //await page.goto(url);
    
     const content = await page.content();       // 페이지의 HTML을 가져온다.
     
@@ -136,7 +136,7 @@ const GetStormInfo =  async() => {
 
 
 CrawlingClass = new CrawlingClass();
-CrawlingClass.GetStormInfo();
+//CrawlingClass.GetStormInfo();
 
     
 //  exports.getHtmlFromTD = getHtmlFromTD;
