@@ -24,8 +24,7 @@
 #### jQuery
 #### --- 이후 도입예정 ---
 
-#### React
-#### svelte
+#### svelte >> weather에서 
 
 
 ## DB
