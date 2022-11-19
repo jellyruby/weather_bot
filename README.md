@@ -22,9 +22,10 @@
 #### CSS
 #### JS
 #### jQuery
-#### --- 이후 도입예정 ---
 
-#### svelte >> weather에서 
+----
+
+#### svelte [weather 에서작업](https://github.com/jellyruby/weather)
 
 
 ## DB
