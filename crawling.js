@@ -1,6 +1,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const puppeteer = require('puppeteer');
+const downloadFile = require('./donwloader');
 
 //TropicalTidibits : TD
 //cyclonicwx : CWX
@@ -26,6 +27,8 @@ class CrawlingClass {
             image_url:$(list).find('.track ').attr('src'),
             locate: $(list).find('#info > span:nth-child(4)').text()
         };  
+
+
       });
 
       resolve(trackImageList);
@@ -70,8 +73,15 @@ class CrawlingClass {
             title: $(list).find('#info > span:nth-child(3)').text(),
             image_url:$(list).find('.track ').attr('src'),
             locate: $(list).find('#info > span:nth-child(4)').text()
-        };  
+        };
+        
+        console.log('test');
+        downloadFile.downloadFile(`https://cyclonicwx.com${$(list).find('.track ').attr('src')}`,function(){
+          console.log('download success');
+        });
       });
+
+      
 
       resolve(trackImageList);
       

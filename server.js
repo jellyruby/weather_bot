@@ -8,8 +8,11 @@ const methodOverride = require('method-override')
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
-
+const cron = require('node-cron');
 const app = express();
+
+
+
 app.use(session({secret : '비밀코드', resave : true, saveUninitialized: false}));
 
 app.use(passport.initialize());
@@ -81,6 +84,17 @@ app.get('/image',function( request , response ){
   response.sendFile( process.env.PROJECTDIR+'images/earth.jpg' );
 
 });
+
+
+
+cron.schedule('* * * * *', async (request,response)=>{
+  const crawling = require('./crawling');
+  const StormInfo = await crawling.GetStormInfo;
+  console.log(StormInfo);
+
+  response.send(StormInfo);
+});
+
 
 app.get('/crawling',async (request,response)=>{
   const crawling = require('./crawling');
