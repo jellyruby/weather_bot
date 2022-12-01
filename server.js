@@ -89,7 +89,7 @@ app.get('/image',function( request , response ){
 
 cron.schedule('* * * * *', async (request,response)=>{
   const crawling = require('./crawling');
-  const StormInfo = await crawling.GetStormInfo;
+  const StormInfo = await crawling.GetStormInfo('https://cyclonicwx.com/storms/');
   console.log(StormInfo);
 
   response.send(StormInfo);
@@ -98,8 +98,12 @@ cron.schedule('* * * * *', async (request,response)=>{
 
 app.get('/crawling',async (request,response)=>{
   const crawling = require('./crawling');
-  const StormInfo = await crawling.GetStormInfo;
+  const StormInfo = await crawling.GetStormInfo('https://cyclonicwx.com/storms/');
   console.log(StormInfo);
+
+
+  const FnmocInfo = await crawling.GetFnmocData('https://www.fnmoc.navy.mil/tcweb/cgi-bin/tc_home.cgi');
+  console.log(FnmocInfo);
 
   response.send(StormInfo);
 
