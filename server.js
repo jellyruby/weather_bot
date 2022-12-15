@@ -41,7 +41,7 @@ var storage = multer.diskStorage({
 var upload = multer({storage : storage});
 
 
-MongoClient.connect('mongodb+srv://yjw001206:secondcoming7@cluster0.rx43y.mongodb.net/todoapp?retryWrites=true&w=majority',
+MongoClient.connect('mongodb+srv://yjw001206:secondcoming7@cluster0.rx43y.mongodb.net/weatherapi?retryWrites=true&w=majority',
 function(error,client){
 
     if(error) return console.log(error);
@@ -59,9 +59,6 @@ function(error,client){
 
 app.use('/shop',require('./routes/shop.js'));
 app.use('/login',require('./routes/login.js'));
-
-var himawari = require('@ungoldman/himawari');
-
 
 app.get('/image',function( request , response ){
 
@@ -89,25 +86,36 @@ app.get('/image',function( request , response ){
 
 cron.schedule('* * * * *', async (request,response)=>{
   const crawling = require('./crawling');
-  const StormInfo = await crawling.GetStormInfo('https://cyclonicwx.com/storms/');
-  console.log(StormInfo);
+  // const StormInfo = await crawling.GetFnmocData('https://www.fnmoc.navy.mil/tcweb/cgi-bin/tc_home.cgi');
 
+
+//   db.collection('data').insertOne( StormInfo, function(error,result){
+//     console.log('생성 완료');
+
+//     response.redirect('/');
+// });
+
+  //console.log(StormInfo);
   response.send(StormInfo);
 });
 
 
 app.get('/crawling',async (request,response)=>{
   const crawling = require('./crawling');
-  const StormInfo = await crawling.GetStormInfo('https://cyclonicwx.com/storms/');
-  console.log(StormInfo);
+  //const StormInfo = await crawling.GetStormInfo('https://cyclonicwx.com/storms/');
+  // console.log(StormInfo);
 
 
-  const FnmocInfo = await crawling.GetFnmocData('https://www.fnmoc.navy.mil/tcweb/cgi-bin/tc_home.cgi');
-  console.log(FnmocInfo);
+  // const FnmocInfo = await crawling.GetFnmocData('https://www.fnmoc.navy.mil/tcweb/cgi-bin/tc_home.cgi');
+  // console.log(FnmocInfo);
+  // crawling.close();
+  
 
-  response.send(StormInfo);
 
-
+  CrawlingClass = new crawling.CrawlingClass();
+  const FnmocInfo =  await CrawlingClass.GetFnmocData('https://www.fnmoc.navy.mil/tcweb/cgi-bin/tc_home.cgi');
+  await CrawlingClass.close();
+  response.send(FnmocInfo);
 })
 
 

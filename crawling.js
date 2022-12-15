@@ -8,7 +8,11 @@ const downloadFile = require('./donwloader');
 
 class CrawlingClass { 
 
-  cycloneDataList = [];
+  cycloneDataList = [
+    {
+      name:"98B"
+    }
+  ];
   browser = null;
   page = null;
 
@@ -18,24 +22,32 @@ class CrawlingClass {
   } 
 
   async init(url){
-    this.browser =  await puppeteer.launch({
-      headless: false,
-      ignoreHTTPSErrors: true,
-    });
+
     
-    this.page = await this.browser.newPage();
+      this.browser =  await puppeteer.launch({
+        headless: false,
+        ignoreHTTPSErrors: true,
+      });
+    
+    
+    const page = await this.browser.newPage();
   
     // 페이지의 크기를 설정한다.
-    await this.page.setViewport({
+    await page.setViewport({
       width: 1366,
       height: 768
     });
     
-    await this.page.goto(url);
+    await page.goto(url);
 
-    this.content = await this.page.content();       // 페이지의 HTML을 가져온다.
+    return page
   }
 
+  async close(){
+
+    this.browser.close();
+
+  }
 
    GetStormInfo = async(url, callFunc ) => {
 
@@ -80,34 +92,63 @@ class CrawlingClass {
   GetFnmocData = async(url, callFunc ) => {
 
     
-    this.cycloneDataList.forEach( async (element,index) => {
+    for (const element of  this.cycloneDataList) {
 
-
-      console.log(element);
-      //$('#StormList a:contains(96S)')
-      const name = element.title.split(' ');
-      const lastname = name[1];
-
-      await this.init(url+'?STORM_NAME='+lastname+'.INVEST');
-
-      // await Promise.all[ this.page.click( "#StormList a:contains("+lastname+")" ),  this.page.waitForNavigation( )];
-
-      // this.page.click( "#ssmis-6 > a" );	// SSMIS 96GHZ 이미지 검색
-      // this.page.waitForNavigation( );	// 해당 페이지의 탐색이 완료되면 클릭 이벤트를 실행
-
-      console.log('바보');
-        await Promise.all[ this.page.click( "#ssmis-6 > a" ),  this.page.waitForNavigation( )];
-      console.log('멍청이');
-      
-      this.content= await this.page.content();
-      
-      const $ = cheerio.load(this.content); 
-      console.log($('#TcMenu > table:nth-child(3) > tbody > tr:nth-child(3) > th > a > img').attr('src'));
-      this.cycloneDataList.infraredImage = $('#TcMenu > table:nth-child(3) > tbody > tr:nth-child(3) > th > a > img').attr('src');
-      
-    });
     
-    //return CycloneDataList;
+        console.log(element);
+        //$('#StormList a:contains(96S)')
+        //const name = element.title.split(' ');
+        //const lastname = name[1];
+        const lastname = element.name;
+
+        const page = await this.init(url+'?STORM_NAME='+lastname+'.INVEST');
+
+        // await Promise.all[ this.page.click( "#StormList a:contains("+lastname+")" ),  this.page.waitForNavigation( )];
+
+        // this.page.click( "#ssmis-6 > a" );	// SSMIS 96GHZ 이미지 검색
+        // this.page.waitForNavigation( );	// 해당 페이지의 탐색이 완료되면 클릭 이벤트를 실행
+        // const browser =  await puppeteer.launch({
+        //   headless: false,
+        //   ignoreHTTPSErrors: true,
+        // });
+        
+        //const page = await browser.newPage();
+  
+        // 페이지의 크기를 설정한다.
+        await page.setViewport({
+          width: 1366,
+          height: 768
+        });
+        
+        await page.goto(url);
+        
+        page.$eval(`#ssmis-6 > a`, element =>element.click());
+        await page.waitForNavigation();
+        
+        //page.click("#ssmis-6 > a");
+        //await page.$eval(`#ssmis-6 > a`, element =>element.click());
+        
+        console.log('test1');
+
+        const content = await page.content();
+        
+        const $ = cheerio.load(content); 
+        console.log($('#TcMenu > table:nth-child(3) > tbody > tr:nth-child(3) > th > a > img').attr('src'));
+        console.log($('#TcMenu > table:nth-child(3)').html());
+        this.cycloneDataList.infraredImage = 'https://www.fnmoc.navy.mil/'+$('#TcMenu > table:nth-child(3) > tbody > tr:nth-child(3) > th > a > img').attr('src');
+
+        
+        // downloadFile.downloadFile(`https://cyclonicwx.com${infraredImage}`,function(){
+        //   console.log('download success');
+        // });
+        //document.querySelector("#TcMenu > table:nth-child(4)")
+
+      
+  }
+  
+  //this.browser.close();
+    
+    return this.cycloneDataList;
 
   };
 
@@ -161,15 +202,16 @@ const GetStormInfo =  async() => {
   };*/
 
 
-CrawlingClass = new CrawlingClass();
+//CrawlingClass = new CrawlingClass();
 //CrawlingClass.GetStormInfo();
 
     
 //  exports.getHtmlFromTD = getHtmlFromTD;
 //  exports.getHtmlFromCWX = getHtmlFromCWX;
-
-exports.GetStormInfo = CrawlingClass.GetStormInfo;
-exports.GetFnmocData = CrawlingClass.GetFnmocData;
+exports.CrawlingClass = CrawlingClass;
+// exports.close = CrawlingClass.close;
+// exports.GetStormInfo = CrawlingClass.GetStormInfo;
+// exports.GetFnmocData = CrawlingClass.GetFnmocData;
   //exports.GetStormInfo = CrawlingClass.GetStormInfo('https://cyclonicwx.com/storms/');
   //exports.GetFnmocData = CrawlingClass.GetFnmocData('https://www.fnmoc.navy.mil/tcweb/cgi-bin/tc_home.cgi/');
 
